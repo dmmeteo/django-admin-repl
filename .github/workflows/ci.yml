@@ -36,7 +36,7 @@ jobs:
     name: test (Python ${{ matrix.python }}, Django ${{ matrix.django }}${{ matrix.extras == '' && ', no extras' || '' }})
     env:
       PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}/demo:${{ github.workspace }}/tests
-      DEMO_DATA_DIR: ${{ runner.temp }}/demo-data
+      DEMO_DATA_DIR: ${{ github.workspace }}/.verify/demo-data
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
