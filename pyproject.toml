@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "django-admin-repl"
+version = "0.1.0"
+description = "A terminal REPL drawer for the stock Django admin, rendered with Ghostty Web over a server-owned PTY."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "dmmeteo" }]
+keywords = ["django", "django-admin", "repl", "shell", "terminal", "ghostty"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Web Environment",
+  "Framework :: Django",
+  "Framework :: Django :: 5.2",
+  "Framework :: Django :: 6.0",
+  "Framework :: Django :: 6.1",
+  "Intended Audience :: Developers",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+]
+dependencies = ["Django>=5.2", "channels>=4.1"]
+
+[project.urls]
+Source = "https://github.com/dmmeteo/django-admin-repl"
+Issues = "https://github.com/dmmeteo/django-admin-repl/issues"
+
+[project.optional-dependencies]
+ipython = ["ipython>=8"]
+shell-plus = ["django-extensions>=3.2"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+django_admin_repl = ["templates/admin_repl/*.html", "static/admin_repl/*", "static/admin_repl/vendor/ghostty-web/*"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "demo_project.settings"
+testpaths = ["tests"]
+addopts = "-p no:cacheprovider"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["src/django_admin_repl/static"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP", "SIM", "RUF"]
+ignore = [
+  "SIM105",  # try/except/pass is the codebase's idiom for best-effort OS calls
+]
+
+[tool.ruff.lint.per-file-ignores]
+"demo/**" = ["RUF012"]  # Django admin and Meta options are class-level lists by convention
+
+[tool.ruff.lint.isort]
+known-first-party = ["django_admin_repl", "demo_project", "notes", "support"]
+
+[tool.ty.environment]
+python-version = "3.12"
+
+[tool.ty.src]
+include = ["src"]

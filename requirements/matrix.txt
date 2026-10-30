@@ -1,0 +1,8 @@
+# Constraints for the Python x Django test matrix (scripts/verify.sh and .github/workflows/ci.yml).
+# Each cell adds its own Django==<patch>. Everything else is pinned here.
+channels==4.3.2
+daphne==4.2.3
+ipython==9.17.1
+django-extensions==4.1
+pytest==9.1.1
+pytest-django==4.14.0

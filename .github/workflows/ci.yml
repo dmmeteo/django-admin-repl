@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - run: pip install -c requirements/matrix.txt -r requirements/dev.txt Django==6.1.2 channels
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: ty check --python "$(python -c 'import sys; print(sys.prefix)')" src
+
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.12", "3.13", "3.14"]
+        django: ["5.2.18", "6.0.9", "6.1.2"]
+        extras: ["ipython django-extensions"]
+        include:
+          - python: "3.14"
+            django: "6.1.2"
+            extras: ""
+    name: test (Python ${{ matrix.python }}, Django ${{ matrix.django }}${{ matrix.extras == '' && ', no extras' || '' }})
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}/demo:${{ github.workspace }}/tests
+      DEMO_DATA_DIR: ${{ runner.temp }}/demo-data
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -c requirements/matrix.txt "Django==${{ matrix.django }}" channels daphne pytest pytest-django ${{ matrix.extras }}
+      - run: python demo/manage.py migrate -v0 && python demo/manage.py seed_demo
+      - run: python -m pytest -q -rs tests
+
+  verify:
+    # The full release gate: the matrix again in the ci image, built distributions with clean pip installs,
+    # the README quickstart and the Playwright journeys against throwaway demo containers.
+    runs-on: ubuntu-24.04
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v5
+      - run: bash scripts/verify.sh
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-artifacts
+          path: .verify/verify/
+          if-no-files-found: ignore

@@ -1,0 +1,5 @@
+{% extends "admin/base_site.html" %}
+{% load admin_repl %}
+{% block extrahead %}{{ block.super }}{% admin_repl_assets %}{% endblock %}
+{% block userlinks %}{{ block.super }}{% admin_repl_toggle %}{% endblock %}
+{% block footer %}{{ block.super }}{% admin_repl_drawer %}{% endblock %}

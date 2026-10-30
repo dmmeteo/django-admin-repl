@@ -1,0 +1,11 @@
+# cell              python   django   extras (comma-separated pip names, or "-" for none)
+py3.12-django5.2    3.12     5.2.18   ipython,django-extensions
+py3.12-django6.0    3.12     6.0.9    ipython,django-extensions
+py3.12-django6.1    3.12     6.1.2    ipython,django-extensions
+py3.13-django5.2    3.13     5.2.18   ipython,django-extensions
+py3.13-django6.0    3.13     6.0.9    ipython,django-extensions
+py3.13-django6.1    3.13     6.1.2    ipython,django-extensions
+py3.14-django5.2    3.14     5.2.18   ipython,django-extensions
+py3.14-django6.0    3.14     6.0.9    ipython,django-extensions
+py3.14-django6.1    3.14     6.1.2    ipython,django-extensions
+py3.14-django6.1-bare 3.14   6.1.2    -

@@ -1,0 +1,3 @@
+{% if enabled %}{% load static %}<link rel="stylesheet" href="{% static 'admin_repl/drawer.css' %}">
+<script src="{% static 'admin_repl/boot.js' %}" data-side="{{ side }}"></script>
+<script type="module" src="{% static 'admin_repl/drawer.js' %}"></script>{% endif %}

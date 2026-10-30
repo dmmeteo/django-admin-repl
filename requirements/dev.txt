@@ -1,0 +1,4 @@
+# Development tools. Not runtime dependencies of the package.
+ruff==0.17.3
+ty==0.0.95
+build==1.6.1

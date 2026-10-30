@@ -1,0 +1,34 @@
+{% if enabled %}{% load static %}
+<aside id="admin-repl-drawer" class="admin-repl" aria-labelledby="admin-repl-title" hidden
+  data-side="{{ side }}"
+  data-state-url="{% url 'admin_repl:state' %}"
+  data-start-url="{% url 'admin_repl:start' %}"
+  data-end-url="{% url 'admin_repl:end' %}"
+  data-stream-path="{{ stream_path }}"
+  data-ghostty-url="{% static 'admin_repl/vendor/ghostty-web/ghostty-web.js' %}"
+  data-wasm-url="{% static 'admin_repl/vendor/ghostty-web/ghostty-vt.wasm' %}">
+  <div class="admin-repl-resize" data-role="resize" role="separator" tabindex="0" aria-orientation="vertical"
+    aria-controls="admin-repl-drawer" aria-label="Resize the REPL drawer"
+    title="Drag to resize. Arrow keys resize too; Home and End jump to the narrowest and widest."></div>
+  {% csrf_token %}
+  <div class="admin-repl-header">
+    <h2 id="admin-repl-title">Django REPL</h2>
+    <span class="admin-repl-state" data-role="state" data-state="none">Not started</span>
+    <div class="admin-repl-tools">
+      <button type="button" data-action="widen" aria-pressed="false">Full width</button>
+      <button type="button" data-action="close">Close</button>
+    </div>
+  </div>
+  <p class="admin-repl-notice" data-role="notice" role="status" aria-live="polite"></p>
+  <div class="admin-repl-launch" data-role="launch" hidden>
+    <label for="admin-repl-backend">Interpreter</label>
+    <select id="admin-repl-backend" data-role="backend"></select>
+    <button type="button" class="button default" data-action="start">Start session</button>
+  </div>
+  <div class="admin-repl-screen" data-role="screen"></div>
+  <div class="admin-repl-footer">
+    <span class="admin-repl-meta" data-role="meta"></span>
+    <button type="button" class="button admin-repl-end" data-action="end" hidden>End session</button>
+  </div>
+</aside>
+{% endif %}

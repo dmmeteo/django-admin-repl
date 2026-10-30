@@ -1,0 +1,316 @@
+#user-tools .admin-repl-toggle {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--header-link-color);
+  font: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid rgb(255 255 255 / 0.25);
+  cursor: pointer;
+}
+
+#user-tools .admin-repl-icon {
+  margin-right: 4px;
+  vertical-align: -3px;
+}
+
+#user-tools .admin-repl-toggle:hover,
+#user-tools .admin-repl-toggle[aria-expanded="true"] {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+#user-tools .admin-repl-toggle:focus-visible,
+#admin-repl-drawer :focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* drawer.js reads the two minimums for keyboard steps and ARIA values. --admin-repl-preferred is the
+   width the user dragged to, set by boot.js before first paint. */
+:root {
+  --admin-repl-min-width: 360px;
+  --admin-repl-min-page: 400px;
+  --admin-repl-width: clamp(
+    var(--admin-repl-min-width),
+    var(--admin-repl-preferred, min(48rem, 50vw)),
+    100vw - var(--admin-repl-min-page)
+  );
+}
+
+html.admin-repl-wide {
+  --admin-repl-width: 100vw;
+}
+
+/* Docking needs room for the narrowest drawer beside the narrowest page: 360px + 400px. */
+@media (width < 760px) {
+  :root {
+    --admin-repl-width: 100vw;
+  }
+}
+
+@media (width >= 760px) {
+  html.admin-repl-docked:not(.admin-repl-wide) body {
+    padding-right: var(--admin-repl-width);
+  }
+
+  html.admin-repl-left.admin-repl-docked:not(.admin-repl-wide) body {
+    padding-right: 0;
+    padding-left: var(--admin-repl-width);
+  }
+
+  /* Admin content wider than the page area is cut at the drawer edge instead of sliding under it. */
+  html.admin-repl-docked:not(.admin-repl-wide) #container {
+    min-width: 0;
+    overflow-x: clip;
+  }
+
+  /* The admin's own single-column dashboard rules from responsive.css, applied while docked. */
+  html.admin-repl-docked:not(.admin-repl-wide) .dashboard #content {
+    width: auto;
+  }
+
+  html.admin-repl-docked:not(.admin-repl-wide) .colMS,
+  html.admin-repl-docked:not(.admin-repl-wide) .colSM {
+    margin: 0;
+  }
+
+  html.admin-repl-docked:not(.admin-repl-wide) #content-related,
+  html.admin-repl-docked:not(.admin-repl-wide) .colSM #content-related {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+#admin-repl-drawer {
+  position: fixed;
+  inset: 0 0 0 auto;
+  z-index: 1000;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: var(--admin-repl-width);
+  background: var(--body-bg);
+  color: var(--body-fg);
+  border-left: 1px solid var(--hairline-color);
+  box-shadow: -2px 0 12px rgb(0 0 0 / 0.2);
+  transform: translateX(100%);
+  transition: transform 160ms ease-out;
+}
+
+#admin-repl-drawer[data-side="left"] {
+  inset: 0 auto 0 0;
+  border-left: 0;
+  border-right: 1px solid var(--hairline-color);
+  box-shadow: 2px 0 12px rgb(0 0 0 / 0.2);
+  transform: translateX(-100%);
+}
+
+#admin-repl-drawer.is-open {
+  transform: none;
+}
+
+#admin-repl-drawer[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #admin-repl-drawer {
+    transition: none;
+  }
+}
+
+#admin-repl-drawer .admin-repl-resize {
+  position: absolute;
+  inset: 0 auto 0 -6px;
+  z-index: 1;
+  width: 11px;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+
+#admin-repl-drawer .admin-repl-resize::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 3px;
+  width: 5px;
+  height: 48px;
+  margin-top: -24px;
+  border-radius: 3px;
+  background: var(--body-quiet-color);
+  box-shadow: 0 0 0 1px var(--body-bg);
+}
+
+#admin-repl-drawer .admin-repl-resize:hover::before,
+#admin-repl-drawer .admin-repl-resize:focus-visible::before,
+html.admin-repl-resizing #admin-repl-drawer .admin-repl-resize::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 4px;
+  width: 3px;
+  background: var(--primary);
+}
+
+#admin-repl-drawer .admin-repl-resize:hover::after,
+#admin-repl-drawer .admin-repl-resize:focus-visible::after,
+html.admin-repl-resizing #admin-repl-drawer .admin-repl-resize::after {
+  background: var(--primary);
+}
+
+#admin-repl-drawer[data-side="left"] .admin-repl-resize {
+  inset: 0 -6px 0 auto;
+}
+
+#admin-repl-drawer .admin-repl-resize:focus-visible {
+  outline-offset: -2px;
+}
+
+html.admin-repl-resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+
+html.admin-repl-wide #admin-repl-drawer .admin-repl-resize {
+  display: none;
+}
+
+@media (width < 760px) {
+  #admin-repl-drawer .admin-repl-resize {
+    display: none;
+  }
+}
+
+#admin-repl-drawer .admin-repl-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: var(--header-bg);
+  color: var(--header-color);
+}
+
+#admin-repl-drawer h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--header-branding-color);
+}
+
+#admin-repl-drawer .admin-repl-state {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  background: rgb(0 0 0 / 0.2);
+  color: var(--header-color);
+}
+
+#admin-repl-drawer .admin-repl-state[data-state="live"] {
+  background: var(--message-success-bg);
+  color: var(--body-fg);
+}
+
+#admin-repl-drawer .admin-repl-state[data-state="warning"] {
+  background: var(--message-warning-bg);
+  color: var(--body-fg);
+}
+
+#admin-repl-drawer .admin-repl-state[data-state="error"] {
+  background: var(--message-error-bg);
+  color: var(--body-fg);
+}
+
+#admin-repl-drawer .admin-repl-tools {
+  display: flex;
+  gap: 12px;
+  margin-left: auto;
+}
+
+#admin-repl-drawer .admin-repl-tools button {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--header-link-color);
+  cursor: pointer;
+}
+
+#admin-repl-drawer .admin-repl-tools button:hover {
+  color: var(--primary);
+}
+
+#admin-repl-drawer .admin-repl-notice {
+  margin: 0;
+  padding: 8px 16px;
+  font-size: 0.8125rem;
+  background: var(--darkened-bg);
+  border-bottom: 1px solid var(--hairline-color);
+}
+
+#admin-repl-drawer .admin-repl-notice:empty {
+  display: none;
+}
+
+#admin-repl-drawer .admin-repl-launch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--hairline-color);
+}
+
+#admin-repl-drawer .admin-repl-launch[hidden] {
+  display: none;
+}
+
+#admin-repl-drawer .admin-repl-launch label {
+  font-weight: 600;
+}
+
+#admin-repl-drawer .admin-repl-screen {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  padding: 8px;
+  background: #0d1117;
+}
+
+#admin-repl-drawer .admin-repl-screen > * {
+  height: 100%;
+}
+
+#admin-repl-drawer .admin-repl-screen:focus-within {
+  box-shadow: inset 0 0 0 2px var(--primary);
+}
+
+#admin-repl-drawer .admin-repl-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 2.25rem;
+  padding: 6px 16px;
+  font-size: 0.75rem;
+  color: var(--body-quiet-color);
+  border-top: 1px solid var(--hairline-color);
+}
+
+#admin-repl-drawer .admin-repl-meta {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+#admin-repl-drawer .admin-repl-end {
+  background: var(--delete-button-bg);
+  color: var(--button-fg);
+}
+
+#admin-repl-drawer .admin-repl-end:hover,
+#admin-repl-drawer .admin-repl-end:focus {
+  background: var(--delete-button-hover-bg);
+}

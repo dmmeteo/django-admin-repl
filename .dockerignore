@@ -1,0 +1,13 @@
+.git
+.github
+.venv
+.verify
+build
+dist
+*.egg-info
+**/__pycache__
+**/*.pyc
+demo/.data
+tests/browser/node_modules
+tests/browser/artifacts
+docs
